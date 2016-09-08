@@ -61,13 +61,19 @@
             </div>
         </div>
     </div>
+    <div id="dialog-confirm" title="Delete contact?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This contact will be permanently deleted and cannot be recovered. Are you sure?</p>
+    </div>
     @endsection
 
     @section('page_specific_styles')
         <!-- DataTables -->
         <link rel="stylesheet" href="{{ asset('plugins/datatables/dataTables.bootstrap.css') }}">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
     @endsection
     @section('page_specific_scripts')
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
         <!-- DataTables -->
         <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('plugins/datatables/dataTables.bootstrap.min.js') }}"></script>
@@ -81,22 +87,41 @@
             jQuery( document ).ready( function( $ ) {
 
                 $('.send-btn').click(function(){
-
                     //var contactid = $('#contactid').val();
-                   var contactid = this.id;
-                    $.ajax({
-                        url: 'deletecontact',
-                        type: "post",
-                        data: {'contactid':contactid, '_token': $('input[name=_token]').val()},
-                        success: function(data){
+                    var contactid = this.id;
 
-                            if(data=='success'){
-                                alert("contact deleted successfully!");
-                                window.location.reload(true);
+                    $( "#dialog-confirm" ).dialog({
+                        resizable: false,
+                        height: "auto",
+                        width: 400,
+                        modal: true,
+                        buttons: {
+                            "Delete Contact": function() {
+                               // $( this ).dialog( "close" );
+
+                                $.ajax({
+                                    url: 'deletecontact',
+                                    type: "post",
+                                    data: {'contactid':contactid, '_token': $('input[name=_token]').val()},
+                                    success: function(data){
+
+                                        if(data=='success'){
+
+                                            window.location.reload(true);
+                                        }
+
+                                    }
+                                });
+
+                            },
+                            Cancel: function() {
+                                $( this ).dialog( "close" );
                             }
-
                         }
                     });
+
+
+
                 });
                 // CSRF protection
                 $.ajaxSetup({  headers: {'X-CSRF-Token': $('input[name="_token"]').val() } });
