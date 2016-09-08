@@ -96,7 +96,7 @@
                         width: 400,
                         modal: true,
                         buttons: {
-                            "Delete Contact": function() {
+                            "Delete": function() {
                                // $( this ).dialog( "close" );
 
                                 $.ajax({
